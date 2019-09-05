@@ -323,4 +323,174 @@ LIKE：模糊查询
                     * _:单个任意字符
                     * %：多个任意字符
 全国有多少人的名字中有“伟”的，就要用到like ‘%伟%’
+17.DQL排序查询
+语法：order by 子句
+            * order by 排序字段1 排序方式1 ，排序字段2 排序方式2...
+        * 排序方式：
+            * ASC：升序，默认的。
+            * DESC：降序
+注意：
+            * 如果有多个排序条件，则当前边的条件值一样时，才会判断第二条件
+18.DQL聚合函数
+聚合函数对一组值执行计算并返回单一的值。除了 COUNT 以外，聚合函数忽略空值。聚合函数经常与 SELECT 语句的 GROUP BY 子句一同使用。
+聚合函数：将一列数据作为一个整体，进行纵向的计算。
+        1. count：计算个数
+            1. 一般选择非空的列：主键
+ 	    2. count(*)
+        2. max：计算最大值
+        3. min：计算最小值
+        4. sum：计算和
+        5. avg：计算平均值
+19.DQL分组查询
+	GROUP BY关键字可以将查询结果按照某个字段或多个字段进行分组。字段中值相等的为一组。基本的语法格式如下：
+GROUP BY 属性名 [HAVING 条件表达式] [WITH ROLLUP]
+   	• 属性名：是指按照该字段的值进行分组。
+    	• HAVING 条件表达式：用来限制分组后的显示，符合条件表达式的结果将被显示。
+    	• WITH ROLLUP：将会在所有记录的最后加上一条记录。加上的这一条记录是上面所有记录的总和。
 
+	1. 语法：group by 分组字段；
+        2. 注意：
+            1. 分组之后查询的字段：分组字段、聚合函数
+            2. where 和 having 的区别？
+                1. where 在分组之前进行限定，如果不满足条件，则不参与分组。having在分组之后进行限定，如果不满足结果，则不会被查询出来
+                2. where 后不可以跟聚合函数，having可以进行聚合函数的判断。
+
+
+ROUP BY关键字可以和GROUP_CONCAT()函数一起使用。GROUP_CONCAT()函数会把每个分组中指定的字段值都显示出来。
+
+同时，GROUP BY关键字通常与集合函数一起使用。集合函数包括COUNT()函数、SUM()函数、AVG()函数、MAX()函数和MIN()函数等。
+
+sql语句的执行过程是：from-->where-->group by -->having --- >order by --> select;
+其执行顺序为：FROM-WHERE-GROUP BY-HAVING-SELECT-DISTINCT-UNION-ORDER BY
+Mysql执行顺序：开始->FROM子句->WHERE子句->GROUP BY子句->HAVING子句->ORDER BY子句->SELECT子句->LIMIT子句->最终结果
+聚合函数是针对结果集进行的，但是where条件并不是在查询出结果集之后运行，所以主函数放在where语句中，会出现错误，
+
+而having不一样，having是针对结果集做筛选的，所以我门一般吧组函数放在having中，用having来代替where，having一般跟在group by后
+
+20.约束概述 
+对表中的数据进行限定，保证数据的正确性、有效性和完整性。
+	主键约束（Primary Key constraint）：要求主键列数据唯一，并且不允许为空。
+	唯一约束（Unique constraint）：要求该列唯一，允许为空，但只能出现一个空值。
+	检查约束（Check constraint）：某列取值范围限制，格式限制等，如有关年龄、邮箱（必须有@）的约束。
+	默认约束（Default constraint）：某列的默认值，如在数据库里有一项数据很多重复，可以设为默认值。
+	外键约束（Foreign Key constraint）：用于在两个表之间建立关系，需要指定引用主表的哪一列。
+
+21.约束_非空约束
+not null，某一列的值不能为null
+	1. 创建表时添加约束
+            CREATE TABLE stu(
+                id INT,
+                NAME VARCHAR(20) NOT NULL -- name为非空
+            );
+ 	2. 创建表完后，添加非空约束
+            ALTER TABLE stu MODIFY NAME VARCHAR(20) NOT NULL;
+ 	3. 删除name的非空约束
+            ALTER TABLE stu MODIFY NAME VARCHAR(20);
+
+22. 约束_唯一约束
+unique，某一列的值不能重复。注意：null值可以有多个。
+唯一约束：unique，某一列的值不能重复
+        1. 注意：
+            * 唯一约束可以有NULL值
+        2. 在创建表时，添加唯一约束
+            CREATE TABLE stu(
+                id INT,
+                phone_number VARCHAR(20) UNIQUE -- 手机号
+            );
+        3. 删除唯一约束
+            ALTER TABLE stu DROP INDEX phone_number;
+        4. 在表创建完后，添加唯一约束
+            ALTER TABLE stu MODIFY phone_number VARCHAR(20) UNIQUE;
+23.约束_主键约束
+	primary key，非空并且唯一，一张表只能有一个主键，主键是表的唯一标识
+	主键约束：primary key。
+        1. 注意：
+            1. 含义：非空且唯一
+            2. 一张表只能有一个字段为主键
+            3. 主键就是表中记录的唯一标识
+
+        2. 在创建表时，添加主键约束
+            create table stu(
+                id int primary key,-- 给id添加主键约束
+                name varchar(20)
+            );
+
+        3. 删除主键
+            -- 错误 alter table stu modify id int ;
+            ALTER TABLE stu DROP PRIMARY KEY;
+
+        4. 创建完表后，添加主键
+            ALTER TABLE stu MODIFY id INT PRIMARY KEY;
+
+
+
+	主键主要用在查询单调数据，修改单调数据和删除单调数据上。
+24.约束_主键约束_自动增长
+	自动增长：
+            1.  概念：如果某一列是数值类型的，使用 auto_increment 可以来完	成值得自动增长
+
+            2. 在创建表时，添加主键约束，并且完成主键自增长
+            create table stu(
+                id int primary key auto_increment,-- 给id添加主键约束
+                name varchar(20)
+            );
+
+            
+            3. 删除自动增长
+            ALTER TABLE stu MODIFY id INT;
+            4. 添加自动增长
+            ALTER TABLE stu MODIFY id INT AUTO_INCREMENT;
+
+
+	优点是：
+		1.自动编号 速度快
+		2.数字型 占用空间小 易排序
+		3.不用担心主键重复的问题
+	缺点是:
+		1.在异库异构的数据库的情况下 容易新老主键混合 会发生冲突
+		2.在系统集成的时候 如果主键的类型不一样的话 会导致其他外建关联的表的修改
+		3.若系统也是数字型的，在导入时，为了区分新老数据，可能想在老数据主键前统一加一个字符标识（例如“o”，old）来表示这是老数据，那么自动增长的数字型又面临一个挑战。
+
+25.约束_外键约束
+foreign key,让表于表产生关系，从而保证数据的正确性。
+外键约束：foreign key,让表于表产生关系，从而保证数据的正确性。
+        1. 在创建表时，可以添加外键
+            * 语法：
+                create table 表名(
+                    ....
+                    外键列
+                    constraint 外键名称 foreign key (外键列名称) references 主表名称(主表列名称)
+                );
+
+        2. 删除外键
+            ALTER TABLE 表名 DROP FOREIGN KEY 外键名称;
+
+        3. 创建表之后，添加外键
+            ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY (外键字段名称) REFERENCES 主表名称(主表列名称);
+
+26.约束_外键约束_级联操作
+	A表与B表有外键约束，A中有外键，B中数据改变时，A中的外键字段对应做出改变。
+		1. 添加级联操作
+                语法：ALTER TABLE 表名 ADD CONSTRAINT 外键名称 
+                        FOREIGN KEY (外键字段名称) REFERENCES 主表名称(主表列名称) ON UPDATE CASCADE ON DELETE CASCADE  ;
+           	2. 分类：
+                1. 级联更新：ON UPDATE CASCADE 
+                2. 级联删除：ON DELETE CASCADE 
+27.多表关系介绍
+		1.一对一(了解)：
+                * 如：人和身份证
+                * 分析：一个人只有一个身份证，一个身份证只能对应一个人
+           	2. 一对多(多对一)：
+                * 如：部门和员工
+                * 分析：一个部门有多个员工，一个员工只能对应一个部门
+            	3. 多对多：
+		* 如：学生和课程
+                * 分析：一个学生可以选择很多门课程，一个课程也可以被很多学生选择
+		 多对多：
+                * 如：学生和课程
+                * 实现方式：多对多关系实现需要借助第三张中间表。中间表至少包含两个字段，这两个字段作为第三张表的外键，分别指向两张表的主键
+
+		需要创建一张中间表来维护两张主表之间的关系，并且中间表最少要有两个字段。
+		
+
+28.
