@@ -1144,3 +1144,260 @@ public class JDBCUtils {
             * 在catch中回滚事务
 
 	在执行SQL语句之前，先执行start transaction，这就开启了一个事务（事务的起点），然后可以去执行多条SQL语句，最后要结束事务，commit表示提交，即事务中的多条SQL语句所作出的影响会持久到数据库中，或者rollback，表示回滚到事务的起点，之前做的所有操作都被撤销了。
+56.JDBC连接池的基本原理及实现方式
+    1.使用数据库连接池的原因：
+        传统方式创建和销毁连接都需要消耗系统资源
+        传统方式创建和销毁连接都需要消耗时间
+
+    2.使用数据库连接池的目的：
+        为了复用连接，代替传统的频繁占用系统资源和耗费时间的方式
+        便于管理连接，可以规定最大的连接数（控制应用服务器对数据库的并发访问）
+
+57.基于统一，JAVA为数据库连接池提供了公共接口，要求所有项目开发的连接池必须实现DataSource接口，可一统一用一套接口的方法使用不同开发商的数据库连接池。
+
+58.
+c3p0连接池
+
+    封装c3p0连接池创建一个数据库工具类
+
+	/**
+	 * (封装c3p0连接池来创建数据库工具类)
+	 * @author YanoHao
+	 *
+	 */
+	public class DatabaseUtil {
+   	 /**
+	  * c3p0连接池对象的引用
+	  */
+	  private static DataSource c3p0Poor;
+	 /**
+	  * 创建一次
+	  */
+    static {
+        //直接创建连接池对象（自动加载配置文件，无需设置参数）
+        c3p0Poor = new ComboPooledDataSource();
+        //通过工厂的方式创建连接池对象
+        //      try {
+//          DataSource unpooledDataSource = DataSources.unpooledDataSource();
+//          c3p0Poor = DataSources.pooledDataSource(unpooledDataSource);
+//      } catch (SQLException e) {
+//          // TODO Auto-generated catch block
+//          e.printStackTrace();
+//      }
+    }
+    /**
+     * 获取连接对象
+     * @throws SQLException 
+     */
+    public static Connection getConnection() throws SQLException{
+
+        Connection connection = c3p0Poor.getConnection();
+        System.out.println("获取连接对象成功");
+        return connection;
+    }
+
+    /**
+     * 关闭资源
+     */
+    //关闭建立的连接对象，释放资源
+        public static void closeSourceConnection(Connection connection, Statement statement, ResultSet resultSet){
+
+            try {
+                if (connection!=null) {
+                    connection.close();
+                }
+                if (statement!=null) {
+                    statement.close();
+                }
+                if (resultSet!=null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static DataSource getC3p0Poor() {
+            return c3p0Poor;
+        }
+}
+
+59.
+	druid连接池
+
+    封装druid连接池创建一个数据库工具类
+
+/*
+ * 封装druid连接池创建工具类
+ */
+public class DatabaseUtil {
+
+    /**
+     * 数据库连接池（druid连接池）对象引用
+     */
+    private static DataSource druidPool;
+
+    static {
+        try {
+            Properties properties = new Properties();
+            ClassLoader classLoader = DatabaseUtil.class.getClassLoader();
+            InputStream resourceAsStream = classLoader.getResourceAsStream("druidconfig.properties");
+            properties.load(resourceAsStream);
+            //通过直接创建连接池对象的方式创建连接池对象
+//          DruidDataSource druidDataSource = new DruidDataSource();
+//          druidDataSource.setUsername(properties.getProperty("username"));
+//          druidDataSource.setPassword(properties.getProperty("password"));
+//          druidDataSource.setUrl(properties.getProperty("url"));
+//          druidDataSource.setDriverClassName(properties.getProperty("driverClassName"));
+//          druidPool = druidDataSource;
+            //通过工厂的方式创建连接池对象
+            druidPool = DruidDataSourceFactory.createDataSource(properties);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }   
+    }
+
+    public static Connection getConnection() throws SQLException{
+
+        Connection connection = druidPool.getConnection();
+        return connection;
+    }
+
+    /**
+     * 
+     * 关闭建立的连接对象，释放资源
+     */
+    public static void closeSourceConnection(Connection connection, Statement statement, ResultSet resultSet){
+
+        try {
+            if (connection!=null) {
+                connection.close();
+            }
+            if (statement!=null) {
+                statement.close();
+            }
+            if (resultSet!=null) {
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static DataSource getDruidPool() {
+        return druidPool;
+    }
+}
+
+60.使用Spring JDBCTemplate简化JDBC的操作
+	在spring中对原生的jdbc操作进行封装成模板类JdbcTemplate类，之所以封装，是因为原生jdbc操作不但麻烦而且啰嗦，使业务代码和数据库操作代码混在一起，相当杂乱。而且如果你获得数据源连接之后如果忘了关闭，就会有数据连接泄露的风险，久而久之，系统崩溃。而使用JdbcTemplate就不一样了，spring对于数据的操作采用模板模式进行，分为模板和回调两个部分，对于连接数据库，释放资源这种不变的操作封装在模板中，而对于数据库的数据访问封装在回调接口中进行，spring的这一方法，不可谓不经典！
+	今天的主题说的是JdbcTemplate对于查询数据的操作，有两种接口都可以进行查询，分别是RowCallbackHandler()和RowMapper<T>,下面先来看看例子
+    package com.smart.pojo;
+    //实体类，博客论坛
+    public class Forum {
+     
+        private int forumId;
+        private String forumName;
+        private String forumDesc;
+     
+        public int getForumId() {
+            return forumId;
+        }
+     
+        public void setForumId(int forumId) {
+            this.forumId = forumId;
+        }
+     
+        public String getForumName() {
+            return forumName;
+        }
+     
+        public void setForumName(String forumName) {
+            this.forumName = forumName;
+        }
+     
+        public String getForumDesc() {
+            return forumDesc;
+        }
+     
+        public void setForumDesc(String forumDesc) {
+            this.forumDesc = forumDesc;
+        }
+    }
+
+数据访问接口如下：
+
+    @Repository
+    public class ForumDao {
+     
+        private JdbcTemplate jdbcTemplate;
+     
+        @Autowired
+        public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+            this.jdbcTemplate = jdbcTemplate;
+        }
+     
+        //查询数据,使用RowCallbackHandler处理结果集
+        public Forum getForum(final int forumId){
+            String sql = "select forum_name,forum_desc from t_forum where forum_id=?";
+            final Forum forum = new Forum();
+     
+            //将结果集数据行中的数据抽取到forum对象中
+            jdbcTemplate.query(sql, new Object[]{forumId}, new RowCallbackHandler() {
+                public void processRow(ResultSet rs) throws SQLException {
+                    forum.setForumId(forumId);
+                    forum.setForumName(rs.getString("forum_name"));
+                    forum.setForumDesc(rs.getString("forum_desc"));
+                }
+            });
+            return forum;
+        }
+     
+        //查询数据，批量查询,调用RowCallbackHandler()接口
+        public List<Forum> getForums(final int fromId , final int toId){
+            String sql = "select * from t_forum where forum_id between ? and ?";
+            final List<Forum> forumList = new ArrayList<Forum>();
+     
+            jdbcTemplate.query(sql, new Object[]{fromId, toId}, new RowCallbackHandler() {//将结果集中的数据映射到List中
+                public void processRow(ResultSet rs) throws SQLException {
+                    Forum forum = new Forum();
+                    forum.setForumId(rs.getInt("forum_id"));
+                    forum.setForumName(rs.getString("forum_name"));
+                    forum.setForumDesc(rs.getString("forum_desc"));
+                    forumList.add(forum);
+                }
+            });
+            return forumList;
+        }
+     
+        ////查询数据，批量查询,调用RowMapper()接口
+        public List<Forum> getForumsByRowMapper(final int fromId , final int toId){
+            String sql = "select * from t_form where forum_id between ? and ?";
+            return jdbcTemplate.query(sql, new Object[]{fromId, toId}, new RowMapper<Forum>() {
+                public Forum mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    Forum forum = new Forum();
+                    forum.setForumId(rs.getInt("forum_id"));
+                    forum.setForumName(rs.getString("forum_name"));
+                    forum.setForumDesc(rs.getString("forum_desc"));
+                    return forum;
+                }
+            });
+        }
+        
+        
+    }
+
+可以看出，无论是单个对象查询还是集合查询，都可以使用RowCallbackHandler回调接口，通过该接口可以定义如何从结果集中获取数据。而RowMapper<T>仅需定义结果集行和对象的映射关系即可。
+
+那么问题来了，二者有何区别？
+
+【我们知道，通过JDBC查询返回一个ResultSet结果集时，JDBC并不会一次性将匹配的数据都加载到JVM中，而是只返回一批次的数据（由JDBC驱动程序决定，如ORACLE的JDBC驱动默认返回10行），当通过ResultSet#next（）游标滚动结果集超过数据范围时，JDBC再获取一批数据。这样以一种“批量化+串行化”的处理方式避免大结果集处理时JVM内存的过大开销。】
+
+当处理大结果集时，如果使用Row Mapper，那么采用的方式是将结果集中的所有数据都放到一个List<T>对象中，这样将会占用大量的JVM内存，甚至可能引发OutOfMemoryException，这时，可以采用RowCallbackHandler接口，在processRow()接口方法内部一边获取数据一边完成处理，这样数据就不会在内存中堆积，可大大减少对JVM内存的占用。
+
+****************************************************************************************************************************
+
+举例：如果程序要求给所有系统用户发送一封邮件，而系统用户数量为100万。一种方案是采用RowMapper,返回一个List<User>集合，再通过遍历这个List<User>，逐个发送邮件；而另一种方案是采用RowCallbackHandler接口，在processRow（）接口方法内部逐行获取User数据后，立即调用邮件服务发送邮件。虽然这两种方案都达到了相同的目的，但第一种方案会在程序运行过程中，在JVM中产生一个系统用户数大小为100万条的List<User>，从而导致极低的系统性能和巨大的内存开销，甚至引起系统崩溃。
+
+结论：采用RowMapper的操作方式是先获取数据，再处理数据；而RowCallbackHandler得操作方式是一边获取数据一边处理，处理完就丢弃。因此，可以将RowMapper看作采用批量化数据处理策略，而RowCallbackHandler则采用流化处理数据。
