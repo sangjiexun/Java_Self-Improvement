@@ -1,1 +1,13 @@
-1.
+1.javascript是什么,一种客户端脚本语法,作用与html交互。
+  Javascript:客户端脚本语言,作用与html交互,让页面具有动态效果,增强用户体验
+2.javascript经过不断的发展,基本组成部分有bom对象,dom对象,以及基本语法组成。  引入方式和css基本一样.
+3.五种原始类型有哪些？
+   Number
+   String
+   Null
+   Boolean
+   undefined 
+4.js是一门弱类型脚本语法,所有的定义变量都用var接收
+  js是弱类型客户端编程语言,区分和强类型编程语言的区别.
+5.在java里面可以使用instanceof 来判断类型,在js里面可以使用typeof判断变量的类型
+6.js里面的定义变量,决定是全局变量,还是局部变量,取决于变量的位置.
