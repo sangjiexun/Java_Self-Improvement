@@ -1,13 +1,141 @@
 1.javascript是什么,一种客户端脚本语法,作用与html交互。
   Javascript:客户端脚本语言,作用与html交互,让页面具有动态效果,增强用户体验
+
 2.javascript经过不断的发展,基本组成部分有bom对象,dom对象,以及基本语法组成。  引入方式和css基本一样.
+
 3.五种原始类型有哪些？
    Number
    String
    Null
    Boolean
    undefined 
+   
 4.js是一门弱类型脚本语法,所有的定义变量都用var接收
   js是弱类型客户端编程语言,区分和强类型编程语言的区别.
+  
 5.在java里面可以使用instanceof 来判断类型,在js里面可以使用typeof判断变量的类型
+
 6.js里面的定义变量,决定是全局变量,还是局部变量,取决于变量的位置.
+
+7.JavaScript_对象_Function
+       //1.创建方式1
+        var fun1 = new Function("a","b","c","alert(a);");
+       //调用方法
+       // fun1(3,4);
+       // alert(fun1.length);
+       //2. 创建方式2
+        function fun2(a , b){
+            alert(a + b);
+        }
+
+        //fun2(3,4);
+
+        //alert(fun2.length);
+        var fun3 = function(a,b){
+            alert(a+b);
+
+        }
+        //alert(fun3.length);
+       // fun3(3,4);
+
+
+        /*fun2 = function(a , b){
+            alert(a - b);
+        }*/
+        function fun2(a , b){
+            //alert(a - b);
+            alert(a);
+            alert(b);
+        }
+
+        //fun2(3,4);
+
+        //方法调用
+        //fun2(1,2);
+        //fun2(1);
+        //fun2();
+        //fun2(1,2,3);
+
+        /*
+         * 求两个数的和
+         */
+        /*function  add(a , b){
+            return a + b;
+        }*/
+        /**
+         * 求任意个数的和
+         */
+        function add (){
+           var sum = 0;
+            for (var i = 0; i < arguments.length; i++) {
+                sum += arguments[i];
+            }
+            return sum;
+        }
+
+        var sum = add(1,2,3,4);
+        alert(sum);
+        //add(1,3);
+        
+8.JavaScript_对象_Array
+    在js里面要想使用数组,首先创建数组对象,创建方式大体有四种,js里面数组的长度不是固定的.
+
+9.Date对象,是日期对象,在js里面同样获取系统时间.
+	var date = new Date();
+
+        document.write(date + "<br>");
+
+        document.write(date.toLocaleString() + "<br>");
+
+        document.write(date.getTime() + "<br>");
+
+10. Math对象可以进行 
+    获取随机数,四舍五入,向上取整和向下取整的方法.
+    Math：数学对象
+                1. 创建：
+                    * 特点：Math对象不用创建，直接使用。  Math.方法名();
+
+                2. 方法：
+                    random():返回 0 ~ 1 之间的随机数。 含0不含1(左闭右开)
+                    ceil(x)：对数进行上舍入。
+                    floor(x)：对数进行下舍入。
+                    round(x)：把数四舍五入为最接近的整数。
+                3. 属性：
+                    PI
+    
+ 	 /**
+         * 取 1~100之间的随机整数
+         *      1. Math.random()产生随机数：范围 [0,1)小数
+         *      2. 乘以 100 --> [0,99.9999] 小数
+         *      3. 舍弃小数部分 ：floor --> [0,99] 整数
+         *      4. +1 -->[0,99] 整数 [1,100]
+         *
+         *
+         */
+
+       var number =  Math.floor((Math.random() * 100)) + 1;
+       document.write(number);
+
+11.JavaScript_对象_RegExp
+
+	var reg = new RegExp("^\\w{6,12}$");
+	//注意这个地方 要加一个转译符"\",以^开始 以$为结束。
+       
+        var reg2= /^\w{6,12}$/;
+	
+        /*alert(reg);
+        alert(reg2);*/
+
+        var username = "zhangsan";
+
+        //验证
+        var flag = reg.test(username);
+        alert(flag);
+
+12.JavaScript_对象_Global
+   js里面的全局对象,就是可以不用创建对象,可以直接拿来使用,所以在调用全局对象的方法时,可以不用写对象
+
+
+
+
+
