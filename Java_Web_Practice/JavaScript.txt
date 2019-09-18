@@ -317,11 +317,280 @@
 	</script>
 	</body>
 
-19.
+19.自动跳转页 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自动跳转</title>
+    <style>
+        p{
+            text-align: center;
+        }
+        span{
+            color:red;
+        }
+
+    </style>
+
+
+</head>
+<body>
+    <p><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自动跳转</title>
+    <style>
+        p{
+            text-align: center;
+        }
+        span{
+            color:red;
+        }
+
+    </style>
+
+
+</head>
+<body>
+    <p>
+        <span id="time">5</span>秒之后，自动跳转到首页...
+    </p>
+
+
+    <script>
+        /*
+            分析：
+               1.显示页面效果  <p>
+               2.倒计时读秒效果实现
+                   2.1 定义一个方法，获取span标签，修改span标签体内容，时间--
+                   2.2 定义一个定时器，1秒执行一次该方法
+               3.在方法中判断时间如果<= 0 ，则跳转到首页
+
+         */
+       // 2.倒计时读秒效果实现
+
+        var second = 5;
+        var time = document.getElementById("time");
+
+        //定义一个方法，获取span标签，修改span标签体内容，时间--
+        function showTime(){
+            second -- ;
+            //判断时间如果<= 0 ，则跳转到首页
+            if(second <= 0){
+                //跳转到首页
+                location.href = "https://www.baidu.com";
+            }
+
+            time.innerHTML = second +"";
+        }
+
+
+        //设置定时器，1秒执行一次该方法
+        setInterval(showTime,1000);
 
 
 
+    </script>
+</body>
+</html>    
+        <span id="time">5</span>秒之后，自动跳转到首页...
+    </p>
+
+
+    <script>
+        /*
+            分析：
+               1.显示页面效果  <p>
+               2.倒计时读秒效果实现
+                   2.1 定义一个方法，获取span标签，修改span标签体内容，时间--
+                   2.2 定义一个定时器，1秒执行一次该方法
+               3.在方法中判断时间如果<= 0 ，则跳转到首页
+
+         */
+       // 2.倒计时读秒效果实现
+
+        var second = 5;
+        var time = document.getElementById("time");
+
+        //定义一个方法，获取span标签，修改span标签体内容，时间--
+        function showTime(){
+            second -- ;
+            //判断时间如果<= 0 ，则跳转到首页
+            if(second <= 0){
+                //跳转到首页
+                location.href = "https://www.baidu.com";
+            }
+
+            time.innerHTML = second +"";
+        }
+
+
+        //设置定时器，1秒执行一次该方法
+        setInterval(showTime,1000);
 
 
 
+    </script>
+</body>
+</html>    
 
+
+20.Dom就是文档对象,用来操作文档的
+	Document Object Model 文档对象模型 
+	* 将标记语言文档的各个组成部分，封装为对象。可以使用这些对象，对标记语言文档进行CRUD的动态操作 
+
+	在html文档里面,要想操作html标签,首先要获取标签对象,获取标签对象常用的三种方式.
+
+	获取Elment对象的方法 
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>Document对象</title>
+    </head>
+    <body>
+
+
+    <div id="div1">div1</div>
+    <div id="div2">div2</div>
+
+    <div id="div3">div3</div>
+
+    <div class="cls1">div4</div>
+    <div class="cls1">div5</div>
+
+    <input type="text" name="username">
+
+	<script>
+    /*
+    Document：文档对象
+        1. 创建(获取)：在html dom模型中可以使用window对象来获取
+            1. window.document
+            2. document
+        2. 方法：
+            1. 获取Element对象：
+                1. getElementById()	： 根据id属性值获取元素对象。id属性值一般唯一
+                2. getElementsByTagName()：根据元素名称获取元素对象们。返回值是一个数组
+                3. getElementsByClassName():根据Class属性值获取元素对象们。返回值是一个数组
+                4. getElementsByName(): 根据name属性值获取元素对象们。返回值是一个数组
+            2. 创建其他DOM对象：
+                createAttribute(name)
+                createComment()
+                createElement()
+                createTextNode()
+        3. 属性
+
+
+
+     */
+
+    //2.根据元素名称获取元素对象们。返回值是一个数组
+    var divs = document.getElementsByTagName("div");
+    //alert(divs.length);
+    //3.根据Class属性值获取元素对象们。返回值是一个数组
+    var div_cls = document.getElementsByClassName("cls1");
+   // alert(div_cls.length);
+    //4.根据name属性值获取元素对象们。返回值是一个数组
+    var ele_username = document.getElementsByName("username");
+    //alert(ele_username.length);
+
+    var table = document.createElement("table");
+    alert(table);
+
+
+	</script>
+	</body>
+	</html>
+
+21.Element对象的操作属性的方法
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Element对象</title>
+</head>
+<body>
+    <a>点我试一试</a>
+    <input type="button" id="btn_set" value="设置属性">
+    <input type="button" id="btn_remove" value="删除属性">
+
+<script>
+
+    //获取btn
+    var btn_set =document.getElementById("btn_set");
+    btn_set.onclick = function(){
+        //1.获取a标签
+        var element_a = document.getElementsByTagName("a")[0];
+        element_a.setAttribute("href","https://www.baidu.com");
+    }
+
+
+    //获取btn
+    var btn_remove =document.getElementById("btn_remove");
+    btn_remove.onclick = function(){
+        //1.获取a标签
+        var element_a = document.getElementsByTagName("a")[0];
+        element_a.removeAttribute("href");
+    }
+
+
+    
+</script>
+</body>
+</html>
+
+22.Node对象,又称节点对象,是所有对象的父对象,包括Dom对象.
+ 	Node：节点对象，其他5个的父对象
+		* 特点：所有dom对象都可以被认为是一个节点
+		* 方法：
+			* CRUD dom树：
+				* appendChild()：向节点的子节点列表的结尾添加新的子节点。
+				* removeChild()	：删除（并返回）当前节点的指定子节点。
+				* replaceChild()：用新节点替换一个子节点。
+		* 属性：
+			* parentNode 返回节点的父节点。
+
+23.大家一定要明白innerHTML属性,这个属性只有块级标签才有,比如div和span
+24.事件监听机制
+* 概念：某些组件被执行了某些操作后，触发某些代码的执行。	
+	* 事件：某些操作。如： 单击，双击，键盘按下了，鼠标移动了
+	* 事件源：组件。如： 按钮 文本输入框...
+	* 监听器：代码。
+	* 注册监听：将事件，事件源，监听器结合在一起。 当事件源上发生了某个事件，则触发执行某个监听器代码。
+
+	* 常见的事件：
+	1. 点击事件：
+		1. onclick：单击事件
+		2. ondblclick：双击事件
+	2. 焦点事件
+		1. onblur：失去焦点
+		2. onfocus:元素获得焦点。
+
+	3. 加载事件：
+		1. onload：一张页面或一幅图像完成加载。
+
+	4. 鼠标事件：
+		1. onmousedown	鼠标按钮被按下。
+		2. onmouseup	鼠标按键被松开。
+		3. onmousemove	鼠标被移动。
+		4. onmouseover	鼠标移到某元素之上。
+		5. onmouseout	鼠标从某元素移开。
+		
+		
+	5. 键盘事件：
+		1. onkeydown	某个键盘按键被按下。	
+		2. onkeyup		某个键盘按键被松开。
+		3. onkeypress	某个键盘按键被按下并松开。
+
+	6. 选择和改变
+		1. onchange	域的内容被改变。
+		2. onselect	文本被选中。
+
+	7. 表单事件：
+		1. onsubmit	确认按钮被点击。
+		2. onreset	重置按钮被点击。
