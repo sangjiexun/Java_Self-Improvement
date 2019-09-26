@@ -1,1 +1,38 @@
-1.
+1.Cookie&Session
+
+  会话技术在开发中应用非常广泛,主要包括cookie和session技术。
+  1. 会话：一次会话中包含多次请求和响应。 
+  2. * 一次会话：浏览器第一次给服务器资源发送请求，会话建立，直到有一方断开为止 
+  功能：在一次会话的范围内的多次请求间，共享数据 
+  方式： 1. 客户端会话技术：Cookie 2. 服务器端会话技术：Session 
+
+  通过这个案例，大家要清楚cookie在服务器端创建,然后响应给浏览器,在浏览器端保存。
+
+
+2.会话技术_Cookie_原理分析
+  cookie的原理底层其实通过请求头和响应头信息实现的.
+
+
+3.会话技术_Cookie_细节1_发送多个Cookie
+	浏览器端可以一次性保存多个cookie,那么在服务器端就可以向浏览器响应多个cookie,
+	这个过程是响应过程,所以得使用response对象响应给客户端浏览器
+ 
+  response的addCookie()方法,就可以向浏览器响应cookie
+
+
+4.会话技术_Cookie_细节2_Cookie存活时间
+	cookie分为两类:
+	* 会话级别的cookie,浏览器关闭,cookie对象销毁
+	* 持久化cookie,需要设置cookie的存活时间.
+
+	cookie对象的setMaxAge方法的设置时间为0,这个0的含义就是杀死cookie
+
+5.会话技术_Cookie_细节3_Cookie存储中文
+	cookie里面不能保存中文,如果要保存中文,需要将中文转成cookie识别的字符,常用的有URLEncode和URLDecode这两个类.
+
+
+6.会话技术_Cookie_细节4_Cookie共享 
+	cookie的共享,其实就是归还cookie,这和cookie的域名和路径有关.
+	这一段内容,其实就是告诉大家cookie是否提交到服务器端,这和cookie的路径设置和cookie的域名设置有关.
+
+7.
