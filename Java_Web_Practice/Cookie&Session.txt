@@ -55,3 +55,23 @@ Jsp里面书写java代码的三种方式
     3. <%= 代码 %>：定义的java代码，会输出到页面上。输出语句中可以定义什么，该脚本中就可以定义什么。 
 
 10.jsp的内置对象,不需要手动创建,可以直接拿来使用.
+
+11.会话技术_Session_原理分析
+    session的底层实现,依赖会话级别的cookie,浏览器关闭,session对象就找不到了.因为session依赖的cookie不存在了.
+    session是否可以使用 ,依赖会话级别的cookie,当然我们可以克隆一样的cookie,保证session对象可以使用
+    克隆的cookie的名称一定要和会话级别的cookie保证一致.
+   
+    session的钝化和活化,就是一个序列化和反序列化的一个过程.
+  	* session的钝化：
+	* 在服务器正常关闭之前，将session对象系列化到硬盘上
+	* session的活化：
+	* 在服务器启动后，将session文件转化为内存中的session对象即可。
+   
+12.会话技术_Session_特点 
+     session在服务器端保存,数据大小也没有控制,比如显示用户名名称,购物车案例可以通过session来保存数据.
+
+13.cookie和session的区别
+    * session与Cookie的区别：
+	1. session存储数据在服务器端，Cookie在客户端
+	2. session没有数据大小限制，Cookie有
+	3. session数据安全，Cookie相对于不安全
